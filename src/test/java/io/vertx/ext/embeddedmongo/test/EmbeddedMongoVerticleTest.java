@@ -34,7 +34,7 @@ public class EmbeddedMongoVerticleTest extends VertxTestBase {
   @Test
   public void testEmbeddedMongo() {
     // Not really sure what to test here apart from start and stop
-    vertx.deployVerticle("service:io.vertx:ext-mongo-embedded-db", onSuccess(deploymentID -> {
+    vertx.deployVerticle("service:io.vertx:vertx-mongo-embedded-db", onSuccess(deploymentID -> {
       assertNotNull(deploymentID);
       vertx.undeployVerticle(deploymentID, onSuccess(v -> {
         assertNull(v);

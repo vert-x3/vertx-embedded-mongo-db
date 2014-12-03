@@ -1,4 +1,4 @@
-ext
-===
+* Mongo Embedded DB
 
-Vert.x extensions - basically the Vert.x official stack
+This enables you to start up an embedded MongoDB instance by deploying a verticle. Useful for tests that
+require MongoDB
