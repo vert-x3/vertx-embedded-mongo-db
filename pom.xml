@@ -61,13 +61,13 @@
       <!-- declare this dependency to force flapdoodle to use this one. -->
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.16</version>
+      <version>1.7.21</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>de.flapdoodle.embed</groupId>
       <artifactId>de.flapdoodle.embed.mongo</artifactId>
-      <version>1.50.2</version>
+      <version>1.50.3</version>
       <exclusions>
         <exclusion>
           <groupId>org.slf4j</groupId>
