@@ -16,15 +16,20 @@
 
 package io.vertx.ext.embeddedmongo;
 
+import de.flapdoodle.embed.mongo.Command;
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodStarter;
 import de.flapdoodle.embed.mongo.config.IMongodConfig;
 import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
 import de.flapdoodle.embed.mongo.config.Net;
+import de.flapdoodle.embed.mongo.config.RuntimeConfigBuilder;
 import de.flapdoodle.embed.mongo.distribution.Version;
+import de.flapdoodle.embed.process.config.IRuntimeConfig;
 import de.flapdoodle.embed.process.runtime.Network;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.SLF4JLogDelegateFactory;
+import org.slf4j.Logger;
 
 /**
  * This verticle wraps an embedded MongoDB instance.
@@ -56,7 +61,14 @@ public class EmbeddedMongoVerticle extends AbstractVerticle {
       net(new Net(port, Network.localhostIsIPv6())).
       build();
 
-    exe = MongodStarter.getDefaultInstance().prepare(embeddedConfig);
+    Logger logger = (Logger) new SLF4JLogDelegateFactory()
+      .createDelegate(EmbeddedMongoVerticle.class.getCanonicalName()).unwrap();
+
+    IRuntimeConfig runtimeConfig = new RuntimeConfigBuilder()
+      .defaultsWithLogger(Command.MongoD, logger)
+      .build();
+
+    exe = MongodStarter.getInstance(runtimeConfig).prepare(embeddedConfig);
     exe.start();
   }
 
