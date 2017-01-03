@@ -44,6 +44,7 @@ import org.slf4j.Logger;
 public class EmbeddedMongoVerticle extends AbstractVerticle {
 
   private MongodExecutable exe;
+  private int actualPort;
 
   @Override
   public void start() throws Exception {
@@ -54,11 +55,11 @@ public class EmbeddedMongoVerticle extends AbstractVerticle {
 
     JsonObject config = context.config();
 
-    int port = config.getInteger("port");
+    int port = config.getInteger("port", 0);
 
     IMongodConfig embeddedConfig = new MongodConfigBuilder().
       version(Version.Main.PRODUCTION).
-      net(new Net(port, Network.localhostIsIPv6())).
+      net(port == 0 ? new Net() : new Net(port, Network.localhostIsIPv6())).
       build();
 
     Logger logger = (Logger) new SLF4JLogDelegateFactory()
@@ -70,6 +71,12 @@ public class EmbeddedMongoVerticle extends AbstractVerticle {
 
     exe = MongodStarter.getInstance(runtimeConfig).prepare(embeddedConfig);
     exe.start();
+
+    actualPort = embeddedConfig.net().getPort();
+  }
+
+  public int actualPort() {
+    return actualPort;
   }
 
   @Override
