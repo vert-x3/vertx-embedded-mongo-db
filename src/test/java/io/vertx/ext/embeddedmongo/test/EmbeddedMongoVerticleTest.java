@@ -31,7 +31,7 @@ public class EmbeddedMongoVerticleTest extends VertxTestBase {
   @Override
   public VertxOptions getOptions() {
     // It can take some time to download the first time!
-    return new VertxOptions().setMaxWorkerExecuteTime(30 * 60 * 1000);
+    return new VertxOptions().setMaxWorkerExecuteTime(30 * 60 * 1000).setWarningExceptionTime(30 * 60* 1000);
   }
 
   @Test
