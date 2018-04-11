@@ -31,7 +31,7 @@ public class EmbeddedMongoVerticleTest extends VertxTestBase {
   @Override
   public VertxOptions getOptions() {
     // It can take some time to download the first time!
-    return new VertxOptions().setMaxWorkerExecuteTime(30 * 60 * 1000).setWarningExceptionTime(30 * 60* 1000);
+    return new VertxOptions().setMaxWorkerExecuteTime(30 * 60 * 1000).setWarningExceptionTime(30 * 60 * 1000);
   }
 
   @Test
@@ -56,6 +56,27 @@ public class EmbeddedMongoVerticleTest extends VertxTestBase {
   }
 
   @Test
+  public void testConfiguredVersion() {
+    EmbeddedMongoVerticle mongo = new EmbeddedMongoVerticle();
+    vertx.deployVerticle(mongo, createOptions(7533, "3.0.0"), onSuccess(deploymentID -> {
+      assertNotNull(deploymentID);
+      assertEquals(7533, mongo.actualPort());
+      undeploy(deploymentID);
+    }));
+    await();
+  }
+
+  @Test
+  public void testNonexistentVersionFails() {
+    EmbeddedMongoVerticle mongo = new EmbeddedMongoVerticle();
+    vertx.deployVerticle(mongo, createOptions(7533, "ninethousand"), onFailure(throwable -> {
+      testComplete();
+    }));
+    await();
+  }
+
+
+  @Test
   public void testRandomPort() {
     EmbeddedMongoVerticle mongo = new EmbeddedMongoVerticle();
     vertx.deployVerticle(mongo, createOptions(0), onSuccess(deploymentID -> {
@@ -78,7 +99,11 @@ public class EmbeddedMongoVerticleTest extends VertxTestBase {
   }
 
   private DeploymentOptions createOptions(int port) {
-    return createEmptyOptions().setConfig(new JsonObject().put("port", port));
+    return createOptions(port, "3.4.3");
+  }
+
+  private DeploymentOptions createOptions(int port, String version) {
+    return createEmptyOptions().setConfig(new JsonObject().put("port", port).put("version", version));
   }
 
   private DeploymentOptions createEmptyOptions() {

@@ -4,7 +4,8 @@
   "options": {
     "worker": true,
     "config": {
-      "port": 27018 // We choose this so as not to clash with default port 27017 of real Mongo
+      "port": 27018,
+      "version": "3.4.3"
     }
   }
 }
