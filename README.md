@@ -13,5 +13,5 @@ new DeploymentOptions()
      // Prefer a port that doesn't conflict with background mongod
      .put("port", 27018) 
      // Prefer a version that 100% works on Windows
-     .put("version", "3.4.2"))
+     .put("version", "3.4.3"))
 ```
