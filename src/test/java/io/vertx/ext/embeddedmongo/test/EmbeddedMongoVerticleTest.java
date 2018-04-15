@@ -28,10 +28,13 @@ import org.junit.Test;
  */
 public class EmbeddedMongoVerticleTest extends VertxTestBase {
 
+  public static final long MAX_WORKER_EXECUTE_TIME = 30 * 60 * 1000L;
+  public static final int TEST_PORT = 7533;
+
   @Override
   public VertxOptions getOptions() {
     // It can take some time to download the first time!
-    return new VertxOptions().setMaxWorkerExecuteTime(30 * 60 * 1000);
+    return new VertxOptions().setMaxWorkerExecuteTime(MAX_WORKER_EXECUTE_TIME);
   }
 
   @Test
@@ -47,13 +50,34 @@ public class EmbeddedMongoVerticleTest extends VertxTestBase {
   @Test
   public void testConfiguredPort() {
     EmbeddedMongoVerticle mongo = new EmbeddedMongoVerticle();
-    vertx.deployVerticle(mongo, createOptions(7533), onSuccess(deploymentID -> {
+    vertx.deployVerticle(mongo, createOptions(TEST_PORT), onSuccess(deploymentID -> {
       assertNotNull(deploymentID);
-      assertEquals(7533, mongo.actualPort());
+      assertEquals(TEST_PORT, mongo.actualPort());
       undeploy(deploymentID);
     }));
     await();
   }
+
+  @Test
+  public void testDeploysSpecificVersionWithoutErrors() {
+    EmbeddedMongoVerticle mongo = new EmbeddedMongoVerticle();
+    vertx.deployVerticle(mongo, createOptions(TEST_PORT, "3.0.0"), onSuccess(deploymentID -> {
+      assertNotNull(deploymentID);
+      assertEquals(TEST_PORT, mongo.actualPort());
+      undeploy(deploymentID);
+    }));
+    await();
+  }
+
+  @Test
+  public void testNonexistentVersionFails() {
+    EmbeddedMongoVerticle mongo = new EmbeddedMongoVerticle();
+    vertx.deployVerticle(mongo, createOptions(TEST_PORT, "ninethousand"), onFailure(throwable -> {
+      testComplete();
+    }));
+    await();
+  }
+
 
   @Test
   public void testRandomPort() {
@@ -78,7 +102,11 @@ public class EmbeddedMongoVerticleTest extends VertxTestBase {
   }
 
   private DeploymentOptions createOptions(int port) {
-    return createEmptyOptions().setConfig(new JsonObject().put("port", port));
+    return createOptions(port, "3.4.3");
+  }
+
+  private DeploymentOptions createOptions(int port, String version) {
+    return createEmptyOptions().setConfig(new JsonObject().put("port", port).put("version", version));
   }
 
   private DeploymentOptions createEmptyOptions() {
