@@ -1,6 +1,6 @@
 # Mongo Embedded DB
 
-[![Build Status](https://travis-ci.org/vert-x3/vertx-embedded-mongo.svg?branch=master)](https://travis-ci.org/vert-x3/vertx-embedded-mongo)
+[![Build Status](https://github.com/vert-x3/vertx-embedded-mongo/workflows/CI/badge.svg?branch=3.9)](https://github.com/vert-x3/vertx-embedded-mongo/actions?query=workflow%3ACI)
 
 This enables you to start up an embedded MongoDB instance by deploying a verticle. Useful for tests that
 require MongoDB
